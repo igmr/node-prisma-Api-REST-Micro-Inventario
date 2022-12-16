@@ -1,0 +1,13 @@
+{
+	"editor.tabSize": 4,
+	"editor.fontSize": 16,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.renderWhitespace": "all",
+	"cSpell.words": [
+		"almacen",
+		"Almacen",
+		"caracteristicas",
+		"descripcion"
+	],
+}

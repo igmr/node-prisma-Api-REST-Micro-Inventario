@@ -1,0 +1,61 @@
+generator client {
+	provider = "prisma-client-js"
+}
+
+datasource db {
+	provider = "mysql"
+	url      = env("DATABASE_URL")
+}
+
+model Almacen {
+	id                Int                 @id @default(autoincrement())
+	nombre            String              @unique(map: "ukNombreAlmacen") @db.VarChar(120)
+	descripcion       String?             @db.VarChar(255)
+	creado            DateTime            @default(now()) @db.DateTime(0)
+	editado           DateTime?           @db.DateTime(0)
+	ControlInventario ControlInventario[]
+	Inventario        Inventario[]
+}
+
+model ControlInventario {
+	id          Int      @id @default(autoincrement())
+	producto_id Int
+	almacen_id  Int
+	existencia  Float    @default(0) @db.Float
+	ingreso     Float    @default(0) @db.Float
+	egreso      Float    @default(0) @db.Float
+	Almacen     Almacen  @relation(fields: [almacen_id], references: [id], onUpdate: Restrict, map: "fkControlInventarioAlmacen")
+	Producto    Producto @relation(fields: [producto_id], references: [id], onUpdate: Restrict, map: "fkControlInventarioProducto")
+
+	@@index([almacen_id], map: "fkControlInventarioAlmacen")
+	@@index([producto_id], map: "fkControlInventarioProducto")
+}
+
+model Inventario {
+	id                 Int       @id @default(autoincrement())
+	producto_id        Int
+	almacen_id         Int
+	cantidad_capturado Float     @default(1) @db.Float
+	cantidad           Float     @default(1) @db.Float
+	tipo               String    @db.VarChar(15)
+	fecha              DateTime  @default(now()) @db.DateTime(0)
+	nota               String?   @db.VarChar(255)
+	creado             DateTime  @default(now()) @db.DateTime(0)
+	editado            DateTime? @db.DateTime(0)
+	cancelado          DateTime? @db.DateTime(0)
+	Almacen            Almacen   @relation(fields: [almacen_id], references: [id], onUpdate: Restrict, map: "fkInventarioAlmacen")
+	Producto           Producto  @relation(fields: [producto_id], references: [id], onUpdate: Restrict, map: "fkInventarioProducto")
+
+	@@index([almacen_id], map: "fkInventarioAlmacen")
+	@@index([producto_id], map: "fkInventarioProducto")
+}
+
+model Producto {
+	id                Int                 @id @default(autoincrement())
+	nombre            String              @unique(map: "ukNombreProducto") @db.VarChar(120)
+	descripcion       String?             @db.VarChar(255)
+	creado            DateTime            @default(now()) @db.DateTime(0)
+	editado           DateTime?           @db.DateTime(0)
+	ControlInventario ControlInventario[]
+	Inventario        Inventario[]
+}
